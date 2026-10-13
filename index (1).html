@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Battery Circular System</title>
+<meta name="description" content="Interactive, sourced diagram of how lithium, nickel, cobalt, graphite and copper move through the EV battery value chain and loop back through reuse and recycling.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: same system as the Nickel & Cobalt Pathways page — header, stat strip, mineral strip, diagram + side panel, tables, APA references */
+:root{
+  --bg:#F2F4F3; --surface:#FFFFFF; --ink:#16201D; --muted:#56635E; --line:#D3DAD7;
+  --ore:#8A5A2E; --int:#C77C0E; --ref:#2B69A3; --bat:#7A48A8; --mkt:#B8322A;
+  --ni:#3D7A66; --co:#2349B0; --accent:var(--ni); --halo:#F4F7F6;
+  --node:#ECEFEE;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F1513; --surface:#161E1B; --ink:#E4EBE8; --muted:#9AA8A2; --line:#2A3531;
+    --ore:#C99263; --int:#E9A43C; --ref:#62A2DD; --bat:#AC86D8; --mkt:#E8665B;
+    --ni:#6DB39B; --co:#7C9BF0; --halo:#141C19; --node:#1E2925;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F1513; --surface:#161E1B; --ink:#E4EBE8; --muted:#9AA8A2; --line:#2A3531;
+  --ore:#C99263; --int:#E9A43C; --ref:#62A2DD; --bat:#AC86D8; --mkt:#E8665B;
+  --ni:#6DB39B; --co:#7C9BF0; --halo:#141C19; --node:#1E2925;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.page{max-width:1480px;margin:0 auto;padding-inline:clamp(16px,3vw,32px);padding-block:28px 64px;display:flex;flex-direction:column;gap:40px}
+.top{display:flex;flex-direction:column;gap:10px}
+.eyebrow,.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.02;margin:0;text-wrap:balance}
+h1{font-size:clamp(40px,6vw,68px);letter-spacing:-.01em}
+h2{font-size:clamp(30px,4vw,44px);display:flex;align-items:center;gap:14px}
+.intro,.lede{max-width:72ch;margin:0;color:var(--ink);font-size:16px}
+.lede{color:var(--muted)}
+.jump{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:6px;font:600 18px/1 var(--display);letter-spacing:.02em}
+.jump a{display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;border-bottom:2px solid transparent;padding-bottom:3px}
+.jump a:hover{border-color:var(--ink)}
+.sym{display:inline-grid;place-items:center;width:1.25em;height:1.25em;border:2px solid var(--accent);color:var(--accent);font-family:var(--display);font-weight:700;font-size:.8em;line-height:1;border-radius:3px;flex:none}
+.sym.sm{font-size:15px;width:28px;height:26px;border-width:1.5px}
+.metal{display:flex;flex-direction:column;gap:22px}
+.m-head{display:flex;flex-direction:column;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:0}
+.stats div{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.stats dt{font:600 34px/1 var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.stats dd{margin:0;font-size:13.5px;color:var(--muted);line-height:1.4}
+.chain{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.stp{position:relative;padding:10px 12px 12px;background:var(--surface);border-top:4px solid var(--c);display:flex;flex-direction:column;gap:3px}
+.stp-h{font:600 17px/1.1 var(--display);letter-spacing:.02em;text-transform:uppercase;color:var(--c);display:flex;align-items:center;gap:8px}
+.stp-h .sym{--accent:var(--c);font-size:15px;width:28px;height:24px;border-width:1.5px}
+.stp-p{font-size:13.5px;font-weight:500}
+.stp-w{font-size:12.5px;color:var(--muted)}
+.fig{margin:0;background:var(--surface);border:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tb-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.toolbar button{display:inline-flex;align-items:center;gap:7px;font:500 13.5px/1 var(--body);padding:7px 11px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:4px;cursor:pointer}
+.toolbar button:hover{border-color:var(--ink)}
+.toolbar button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toolbar button i{width:18px;height:3px;border-radius:2px;background:var(--c,var(--muted));flex:none}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:12px;align-items:start}
+.mapwrap{border:1px solid var(--line);background:var(--bg);overflow-x:auto}
+svg.dia{display:block;width:100%;min-width:760px;height:auto}
+.dia text{font-family:var(--body);fill:var(--ink)}
+.n rect{fill:var(--node);stroke:var(--muted);stroke-width:1}
+.n .t{font-weight:600;font-size:14.5px}
+.n .s{font-size:12px;fill:var(--muted)}
+.n.l2 rect{fill:color-mix(in srgb,var(--bat) 10%,var(--surface));stroke:var(--bat)}
+.n.l2 .t{fill:var(--bat)}
+.n.bm rect{fill:color-mix(in srgb,var(--mkt) 9%,var(--surface));stroke:var(--mkt)}
+.n.bm .t{fill:var(--mkt)}
+.n.pr rect{fill:color-mix(in srgb,var(--int) 13%,var(--surface));stroke:var(--int)}
+.n.rc rect{fill:color-mix(in srgb,var(--ni) 12%,var(--surface));stroke:var(--ni)}
+.n.rc .t{fill:var(--ni)}
+.n.sl rect{fill:color-mix(in srgb,var(--ref) 12%,var(--surface));stroke:var(--ref)}
+.n.sl .t{fill:var(--ref)}
+.n.q rect{fill:var(--surface);stroke-dasharray:4 3}
+.n.q .t{font-weight:500;font-size:12.5px}
+.n.q.qs rect{stroke:var(--mkt)} .n.q.qs .t{fill:var(--mkt)}
+.n.q.qa rect{stroke:var(--int)} .n.q.qa .t{fill:var(--ore)}
+.frame{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:6 5;opacity:.7}
+.frame2{fill:none;stroke:var(--bat);stroke-width:1;stroke-dasharray:4 4;opacity:.75}
+.flab{font:600 15px var(--display)!important;letter-spacing:.06em;text-transform:uppercase}
+.flab.l1{fill:var(--muted)!important} .flab.l2{fill:var(--bat)!important}
+.ln{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ln.base{stroke:var(--muted);stroke-width:1.4}
+.ln.dash{stroke-dasharray:5 5}
+.c1{stroke:var(--int)} .c2{stroke:var(--ni)} .c3{stroke:var(--ref)} .c4{stroke:var(--bat)} .c5{stroke:var(--mkt)} .cq{stroke:var(--int)}
+.bd circle{stroke-width:1.6;fill:var(--surface)}
+.bd text{font:600 13px var(--mono)!important;text-anchor:middle;dominant-baseline:central}
+.bd.c1 circle{stroke:var(--int)} .bd.c1 text{fill:var(--int)!important}
+.bd.c2 circle{stroke:var(--ni)} .bd.c2 text{fill:var(--ni)!important}
+.bd.c3 circle{stroke:var(--ref)} .bd.c3 text{fill:var(--ref)!important}
+.bd.c4 circle{stroke:var(--bat)} .bd.c4 text{fill:var(--bat)!important}
+.bd.c5 circle{stroke:var(--mkt)} .bd.c5 text{fill:var(--mkt)!important}
+.cap{font:italic 500 12.5px var(--body)!important;fill:var(--bat)!important}
+.hit{fill:none;stroke:transparent;stroke-width:16;pointer-events:stroke}
+[data-id]{cursor:pointer;outline:none}
+[data-id]:hover rect,[data-id].on rect{stroke-width:2.2}
+[data-id]:hover .ln,[data-id].on .ln{stroke-width:3.4}
+[data-id]:hover .bd circle,[data-id].on .bd circle{stroke-width:2.6}
+[data-id]:focus-visible rect,[data-id]:focus-visible .bd circle{stroke:var(--ink);stroke-width:2.6}
+.dia.dim [data-g]:not(.lit){opacity:.18}
+@media (prefers-reduced-motion:no-preference){[data-g]{transition:opacity .2s}}
+.panel{--accent:var(--ni);border-left:3px solid var(--accent);background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:9px;overflow:auto;max-height:640px}
+.p-kind{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;align-items:center;gap:8px;margin:0}
+.p-kind i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent)}
+.panel h4{margin:0;font:600 26px/1.05 var(--display);text-wrap:balance}
+.panel p{margin:0;font-size:14.5px}
+.panel dl{margin:0;display:flex;flex-direction:column;gap:8px}
+.panel dt{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.panel dd{margin:2px 0 0;font-size:14px}
+.panel ol.chk{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.p-src{margin:4px 0 0;padding:8px 0 0;border-top:1px solid var(--line);list-style:none;display:flex;flex-direction:column;gap:5px;font-size:13px}
+.p-src li{display:flex;gap:6px}
+.p-src b{font-family:var(--mono);font-weight:500;color:var(--muted);min-width:2.3em}
+.p-src a{color:var(--ink)}
+.p-hint{font-size:12.5px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;align-items:center}
+.lg-i{display:inline-flex;align-items:center;gap:6px}
+.notes,.fine{margin:0;font-size:12.5px;color:var(--muted);max-width:120ch}
+.cite{font-family:var(--mono);font-size:10.5px;line-height:0;margin-left:1px;white-space:nowrap}
+.cite a{text-decoration:none;color:var(--accent)}
+.cite a:hover{text-decoration:underline}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table.tr{border-collapse:collapse;width:100%;min-width:980px;font-size:13.5px}
+table.tr th,table.tr td{padding:10px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);text-align:left;vertical-align:top}
+table.tr th:last-child,table.tr td:last-child{border-right:0}
+table.tr thead th{font:500 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+table.tr tbody th{font:600 18px/1.1 var(--display);letter-spacing:.02em;white-space:nowrap}
+table.tr tbody th .sym{font-size:14px;width:28px;height:24px;border-width:1.5px;margin-right:8px;vertical-align:middle}
+table.tr tbody tr:last-child th,table.tr tbody tr:last-child td{border-bottom:0}
+.rec{font-weight:600;color:var(--ni)} .lost{font-weight:600;color:var(--mkt)} .part{font-weight:600;color:var(--int)}
+.na{color:var(--muted)}
+.sources{display:flex;flex-direction:column;gap:10px;border-top:2px solid var(--ink);padding-top:18px}
+.sources ol.apa{margin:0;padding-left:34px;max-width:110ch;font-size:13.5px}
+.sources ol.apa li{padding-left:2em;text-indent:-2em;margin-bottom:10px;line-height:1.5}
+.sources ol.apa li::marker{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.sources ol.apa li:target{background:color-mix(in srgb,var(--ni) 16%,transparent)}
+.sources ol.apa a{word-break:break-all;color:var(--ink);text-decoration-color:var(--muted)}
+@media (max-width:1100px){.stage{grid-template-columns:1fr}.panel{max-height:none}}
+@media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.chain{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.stats,.chain{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="page">
+<header class="top">
+  <p class="eyebrow">Capstone · Circularity for critical raw minerals</p>
+  <h1>Battery Circular System</h1>
+  <p class="intro">How lithium, nickel, cobalt, graphite and copper move through the EV battery value chain, and the five loops that bring them back: intensive use, life extension, second life, end-of-life recycling and manufacturing scrap. Click any box, numbered loop or arrow for details and linked sources.</p>
+  <nav class="jump" aria-label="Jump to"><a href="#system">System diagram</a><a href="#sources">References (31)</a></nav>
+</header>
+
+<section class="metal" id="system" aria-labelledby="h-system">
+  <header class="m-head">
+    <p class="kicker">Figure 1 · Layer 1 linear chain + Layer 2 recycling</p>
+    <h2 id="h-system">From a linear chain to a circular system</h2>
+    <p class="lede">The top row is today’s linear chain. After use, batteries are collected and assessed, then routed to life extension, second life or recycling. Recycling turns batteries and factory scrap into battery-grade materials that re-enter the chain at refining or cell production.</p>
+  </header>
+  
+
+  <figure class="fig">
+    <div class="toolbar" role="toolbar" aria-label="Highlight">
+      <span class="tb-h">Highlight</span>
+      <button type="button" data-hl="all" aria-pressed="true">Everything</button>
+      <button type="button" data-hl="lin" aria-pressed="false">Layer 1 · linear</button>
+      <button type="button" data-hl="g1" aria-pressed="false" style="--c:var(--int)"><i></i>Loop 1</button>
+      <button type="button" data-hl="g2" aria-pressed="false" style="--c:var(--ni)"><i></i>Loop 2</button>
+      <button type="button" data-hl="g3" aria-pressed="false" style="--c:var(--ref)"><i></i>Loop 3</button>
+      <button type="button" data-hl="g4" aria-pressed="false" style="--c:var(--bat)"><i></i>Loop 4</button>
+      <button type="button" data-hl="g5" aria-pressed="false" style="--c:var(--mkt)"><i></i>Loop 5</button>
+      <button type="button" data-hl="l2" aria-pressed="false">Layer 2 · recycling</button>
+    </div>
+    <div class="stage">
+      <div class="mapwrap">
+<svg class="dia" viewBox="0 0 1000 620" role="img" aria-labelledby="dia-t dia-d">
+<title id="dia-t">Battery circular system</title>
+<desc id="dia-d">Layer 1: mining, refining and processing, cell production, pack integration, vehicle and service, and use. Batteries go to collection and assessment and then to life extension (loop 2), second life (loop 3) or recycling (loop 4). Manufacturing scrap (loop 5) also goes to recycling. Layer 2: discharge, dismantling, shredding and separation, black mass, then pyrometallurgy, hydrometallurgy or direct recycling, giving recovered materials that return to refining.</desc>
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" fill="context-stroke"/></marker>
+</defs>
+<rect class="frame" x="10" y="10" width="980" height="600" rx="12"/>
+<text class="flab l1" x="28" y="34">Layer 1 · Linear</text>
+
+
+<!-- top row -->
+<g class="n" data-g="lin" data-id="mining" tabindex="0" role="button" aria-label="Mining"><rect x="26" y="50" width="132" height="52" rx="6"/><text class="t" x="92" y="81" text-anchor="middle">Mining</text></g>
+<g class="n" data-g="lin g4 g5" data-id="refining" tabindex="0" role="button" aria-label="Refining and processing"><rect x="182" y="50" width="132" height="52" rx="6"/><text class="t" x="248" y="72" text-anchor="middle">Refining &amp;</text><text class="t" x="248" y="90" text-anchor="middle">processing</text></g>
+<g class="n" data-g="lin g5" data-id="cell" tabindex="0" role="button" aria-label="Cell production"><rect x="338" y="50" width="132" height="52" rx="6"/><text class="t" x="404" y="72" text-anchor="middle">Cell</text><text class="t" x="404" y="90" text-anchor="middle">production</text></g>
+<g class="n" data-g="lin g2" data-id="pack" tabindex="0" role="button" aria-label="Pack integration"><rect x="494" y="50" width="132" height="52" rx="6"/><text class="t" x="560" y="72" text-anchor="middle">Pack</text><text class="t" x="560" y="90" text-anchor="middle">integration</text></g>
+<g class="n" data-g="lin g1" data-id="vehicle" tabindex="0" role="button" aria-label="Vehicle and service"><rect x="650" y="50" width="132" height="52" rx="6"/><text class="t" x="716" y="72" text-anchor="middle">Vehicle &amp;</text><text class="t" x="716" y="90" text-anchor="middle">service</text></g>
+<g class="n" data-g="lin g1" data-id="use" tabindex="0" role="button" aria-label="Use"><rect x="806" y="50" width="132" height="52" rx="6"/><text class="t" x="872" y="81" text-anchor="middle">Use</text></g>
+<g data-g="lin">
+<path class="ln base" d="M158 76H178" marker-end="url(#ah)"/><path class="ln base" d="M314 76H334" marker-end="url(#ah)"/><path class="ln base" d="M470 76H490" marker-end="url(#ah)"/><path class="ln base" d="M626 76H646" marker-end="url(#ah)"/><path class="ln base" d="M782 76H802" marker-end="url(#ah)"/>
+</g>
+
+<!-- loop 1 -->
+<g data-g="g1" data-id="loop1" tabindex="0" role="button" aria-label="Loop 1, intensive use and access">
+<path class="ln c1" d="M938 64H964V90H944" marker-end="url(#ah)"/><path class="hit" d="M938 64H964V90H944"/>
+<g class="bd c1"><circle cx="964" cy="38" r="12"/><text x="964" y="38">1</text></g></g>
+
+<!-- use -> collection -->
+<g data-g="lin g2 g3 g4"><path class="ln base" d="M840 102V140" marker-end="url(#ah)"/></g>
+<g class="n" data-g="lin g2 g3 g4" data-id="collection" tabindex="0" role="button" aria-label="Collection and assessment"><rect x="680" y="144" width="180" height="52" rx="6" style="stroke-width:1.8"/><text class="t" x="770" y="166" text-anchor="middle">Collection &amp;</text><text class="t" x="770" y="184" text-anchor="middle">assessment</text></g>
+
+
+<!-- loop 2 -->
+<g data-g="g2" data-id="loop2" tabindex="0" role="button" aria-label="Loop 2, life extension">
+<path class="ln c2" d="M680 170H560V106" marker-end="url(#ah)"/><path class="hit" d="M680 170H560V106"/>
+<g class="bd c2"><circle cx="622" cy="170" r="12"/><text x="622" y="170">2</text></g></g>
+
+<!-- loop 3 -->
+<g data-g="g3" data-id="loop3" tabindex="0" role="button" aria-label="Loop 3, second life">
+<path class="ln c3" d="M830 196V242" marker-end="url(#ah)"/><path class="hit" d="M830 196V242"/>
+<g class="bd c3"><circle cx="854" cy="219" r="12"/><text x="854" y="219">3</text></g>
+<g class="n sl"><rect x="770" y="246" width="160" height="44" rx="6"/><text class="t" x="850" y="273" text-anchor="middle">Second life</text></g></g>
+<g data-g="g3 g4" data-id="sl2rec" tabindex="0" role="button" aria-label="Second-life batteries reach recycling">
+<path class="ln c4 dash" style="stroke-width:1.8" d="M880 290V342" marker-end="url(#ah)"/><path class="hit" d="M880 290V342"/></g>
+
+<!-- loop 4 -->
+<g data-g="g4" data-id="loop4" tabindex="0" role="button" aria-label="Loop 4, end-of-life recycling">
+<path class="ln c4" d="M720 196V342" marker-end="url(#ah)"/><path class="hit" d="M720 196V342"/>
+<g class="bd c4"><circle cx="720" cy="262" r="12"/><text x="720" y="262">4</text></g></g>
+
+<!-- loop 5 -->
+<g data-g="g5" data-id="loop5" tabindex="0" role="button" aria-label="Loop 5, manufacturing scrap recycling">
+<path class="ln c5" d="M404 102V330H260V342" marker-end="url(#ah)"/><path class="hit" d="M404 102V330H260V342"/>
+<g class="bd c5"><circle cx="404" cy="208" r="12"/><text x="404" y="208">5</text></g></g>
+
+<!-- Layer 2 -->
+<g data-g="l2 g4 g5" data-id="layer2" tabindex="0" role="button" aria-label="Layer 2, recycling overview">
+<rect class="frame2" x="56" y="296" width="904" height="270" rx="10"/><rect class="hit" x="56" y="296" width="904" height="270" rx="10"/>
+<text class="flab l2" x="72" y="320">Layer 2 · Recycling</text></g>
+
+
+<g data-g="g4 l2" data-id="discharge" tabindex="0" role="button" aria-label="Discharge"><g class="n l2"><rect x="690" y="346" width="240" height="56" rx="6"/><text class="t" x="810" y="379" text-anchor="middle">Discharge</text></g></g>
+<g data-g="g4 l2" data-id="dismantling" tabindex="0" role="button" aria-label="Dismantling"><g class="n l2"><rect x="384" y="346" width="240" height="56" rx="6"/><text class="t" x="504" y="379" text-anchor="middle">Dismantling</text></g></g>
+<g data-g="g4 g5 l2" data-id="shredding" tabindex="0" role="button" aria-label="Shredding and separation"><g class="n l2"><rect x="78" y="346" width="240" height="56" rx="6"/><text class="t" x="198" y="379" text-anchor="middle">Shredding &amp; separation</text></g></g>
+<g data-g="g4 l2"><path class="ln base" d="M690 374H628" marker-end="url(#ah)"/><path class="ln base" d="M384 374H322" marker-end="url(#ah)"/></g>
+<g data-g="g4 g5 l2"><path class="ln base" d="M198 402V438" marker-end="url(#ah)"/></g>
+<g data-g="g4 g5 l2" data-id="blackmass" tabindex="0" role="button" aria-label="Intermediate product: black mass"><g class="n bm"><rect x="78" y="442" width="240" height="56" rx="6"/><text class="t" x="198" y="475" text-anchor="middle">Intermediate product</text></g></g>
+
+<g data-g="g4 l2"><path class="ln base" d="M500 402V414" marker-end="url(#ah)"/></g>
+<g data-g="g4 g5 l2" data-id="pyro" tabindex="0" role="button" aria-label="Pyrometallurgy"><g class="n pr"><rect x="400" y="418" width="200" height="38" rx="6"/><text class="t" x="500" y="442" text-anchor="middle">Pyrometallurgy</text></g></g>
+<g data-g="g4 g5 l2" data-id="hydro" tabindex="0" role="button" aria-label="Hydrometallurgy"><g class="n pr"><rect x="400" y="466" width="200" height="38" rx="6"/><text class="t" x="500" y="490" text-anchor="middle">Hydrometallurgy</text></g></g>
+<g data-g="g4 g5 l2" data-id="direct" tabindex="0" role="button" aria-label="Direct recycling"><g class="n pr"><rect x="400" y="514" width="200" height="38" rx="6"/><text class="t" x="500" y="538" text-anchor="middle">Direct recycling</text></g></g>
+<g data-g="g4 g5 l2"><path class="ln base" d="M318 470L396 438" marker-end="url(#ah)"/><path class="ln base" d="M318 470L396 485" marker-end="url(#ah)"/><path class="ln base" d="M318 470L396 532" marker-end="url(#ah)"/>
+<path class="ln base" d="M600 437L686 470" marker-end="url(#ah)"/><path class="ln base" d="M600 485L686 470" marker-end="url(#ah)"/><path class="ln base" d="M600 533L686 470" marker-end="url(#ah)"/></g>
+<g data-g="g4 g5 l2" data-id="recovered" tabindex="0" role="button" aria-label="Recovered materials"><g class="n rc"><rect x="690" y="442" width="240" height="56" rx="6"/><text class="t" x="810" y="475" text-anchor="middle">Recovered materials</text></g></g>
+
+<!-- return loop -->
+<g data-g="g4 g5" data-id="return" tabindex="0" role="button" aria-label="Recovered materials return to refining or cell production">
+<path class="ln c4" d="M810 498V584H30V126H248V106" marker-end="url(#ah)"/><path class="ln c4" d="M248 126H380V106" marker-end="url(#ah)"/><path class="hit" d="M810 498V584H30V126H380V106"/>
+<text class="cap" x="420" y="601" text-anchor="middle">Recovered materials return to refining or cell production</text></g>
+</svg>
+      </div>
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    </div>
+    <div class="legend">
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--int);stroke-width:3"/></svg>1 Intensive Use &amp; Access: BaaS</span>
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--ni);stroke-width:3"/></svg>2 Life Extension: Modular Design</span>
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--ref);stroke-width:3"/></svg>3 Second Life: Stationary Storage</span>
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--bat);stroke-width:3"/></svg>4 End-of-life recycling</span>
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--mkt);stroke-width:3"/></svg>5 Manufacturing scrap recycling</span>
+      <span class="lg-i"><svg width="30" height="10" aria-hidden="true"><path d="M1 5H29" style="stroke:var(--bat);stroke-width:2;stroke-dasharray:5 4"/></svg>Second-life batteries reach recycling</span>
+    </div>
+    <p class="notes">Schematic, not to scale: line weight does not show tonnage. Chemistry in focus: NMC (nickel-manganese-cobalt) cathodes with graphite anodes. Status as of October 2026. Diagram adapted from the Ellen MacArthur Foundation (2026) critical minerals system diagram.</p>
+  </figure>
+</section>
+
+<section class="sources" id="sources" aria-labelledby="h-src"><h2 id="h-src">References</h2>
+<p class="fine">Reference list in APA 7th edition, in alphabetical order. The numbers match the superscript citations on the page and in the diagram panels. IEA page numbers are given in the panels.</p>
+<ol class="apa">
+<li id="src-1">Ample. (2023, May 17). <i>Introducing Ample’s next generation swapping station: A whole new electrifying experience</i>. <a href="https://ample.com/2023/05/17/introducing-amples-next-generation-swapping-station-a-whole-new-electrifying-experience/" target="_blank" rel="noopener">https://ample.com/2023/05/17/introducing-amples-next-generation-swapping-station-a-whole-new-electrifying-experience/</a></li>
+<li id="src-2">Attia, P. M., Moch, E., &amp; Herring, P. K. (2024). <i>Perspective: Challenges and opportunities for high-quality battery production at scale</i> [Preprint]. arXiv. <a href="https://arxiv.org/abs/2403.01065" target="_blank" rel="noopener">https://arxiv.org/abs/2403.01065</a></li>
+<li id="src-3">Bostik. (n.d.). <i>Thermally conductive gap fillers</i>. Retrieved October 13, 2026, from <a href="https://www.bostik.com/us/en_US/markets-applications/automotive/e-mobility-battery-ev-adhesives-and-sealants/ev-battery-thermal-management/thermally-conductive-gap-fillers/" target="_blank" rel="noopener">https://www.bostik.com/us/en_US/markets-applications/automotive/e-mobility-battery-ev-adhesives-and-sealants/ev-battery-thermal-management/thermally-conductive-gap-fillers/</a></li>
+<li id="src-4">California Energy Commission. (2023). <i>Ample Inc. ZVI-22-036 scope of work</i>. <a href="https://www.energy.ca.gov/filebrowser/download/5435?fid=5435" target="_blank" rel="noopener">https://www.energy.ca.gov/filebrowser/download/5435?fid=5435</a></li>
+<li id="src-5">California Energy Commission. (2024). <i>Ample comments on Light Duty Electric Vehicle Block Grant design changes workshop</i> (TN 254001). <a href="https://efiling.energy.ca.gov/GetDocument.aspx?DocumentContentId=89305&amp;tn=254001" target="_blank" rel="noopener">https://efiling.energy.ca.gov/GetDocument.aspx?DocumentContentId=89305&amp;tn=254001</a></li>
+<li id="src-6">Ciampoli, P. (2026, September 12). Battery energy storage system connected within CPS Energy’s service territory enters commercial operation. <i>American Public Power Association</i>. <a href="https://www.publicpower.org/node/31201" target="_blank" rel="noopener">https://www.publicpower.org/node/31201</a></li>
+<li id="src-7">Ellen MacArthur Foundation. (2026). <i>Leading the charge: Turning risk into reward with a circular economy for EV batteries and critical minerals</i>. <a href="https://www.ellenmacarthurfoundation.org/circular-economy-for-ev-batteries-and-critical-minerals" target="_blank" rel="noopener">https://www.ellenmacarthurfoundation.org/circular-economy-for-ev-batteries-and-critical-minerals</a></li>
+<li id="src-8">European Commission. (2025). <i>Manufacturing and assembly of modular and reusable EV battery for environment-friendly and lightweight mobility (MARBEL)</i> [Project results, grant agreement 963540]. CORDIS. <a href="https://cordis.europa.eu/project/id/963540/results" target="_blank" rel="noopener">https://cordis.europa.eu/project/id/963540/results</a></li>
+<li id="src-9">European Parliament &amp; Council of the European Union. (2023). Regulation (EU) 2023/1542 of 12 July 2023 concerning batteries and waste batteries. <i>Official Journal of the European Union, L 191</i>. <a href="https://eur-lex.europa.eu/eli/reg/2023/1542/oj" target="_blank" rel="noopener">https://eur-lex.europa.eu/eli/reg/2023/1542/oj</a></li>
+<li id="src-10">Foehringer Merchant, E. (2026, October 6). Moment Energy and its shipping containers packed with old EV batteries. <i>MIT Technology Review</i>. <a href="https://www.technologyreview.com/2026/10/06/1145221/2026-climate-tech-companies-to-watch-moment-energy-shipping-containers-packed-old-ev-batteries/" target="_blank" rel="noopener">https://www.technologyreview.com/2026/10/06/1145221/2026-climate-tech-companies-to-watch-moment-energy-shipping-containers-packed-old-ev-batteries/</a></li>
+<li id="src-11">Goldberg, A., Hagen, P., &amp; Luo, W. (2025, June 18). <i>China and Europe diverge on classification of black mass from recycling of lithium-ion batteries</i>. Beveridge &amp; Diamond. <a href="https://www.bdlaw.com/publications/china-and-europe-diverge-on-classification-of-black-mass-from-recycling-of-lithium-ion-batteries/" target="_blank" rel="noopener">https://www.bdlaw.com/publications/china-and-europe-diverge-on-classification-of-black-mass-from-recycling-of-lithium-ion-batteries/</a></li>
+<li id="src-12">Harper, G., Sommerville, R., Kendrick, E., Driscoll, L., Slater, P., Stolkin, R., Walton, A., Christensen, P., Heidrich, O., Lambert, S., Abbott, A., Ryder, K., Gaines, L., &amp; Anderson, P. (2019). Recycling lithium-ion batteries from electric vehicles. <i>Nature, 575</i>(7781), 75–86. <a href="https://doi.org/10.1038/s41586-019-1682-5" target="_blank" rel="noopener">https://doi.org/10.1038/s41586-019-1682-5</a></li>
+<li id="src-13">Hu, A. (2026, April 2). China’s new power battery recycling rules: Who makes it, who recycles it. <i>Mysteel</i>. <a href="https://www.mysteel.net/analysis/5118229-chinas-new-power-battery-recycling-rules-who-makes-it-who-recycles-it" target="_blank" rel="noopener">https://www.mysteel.net/analysis/5118229-chinas-new-power-battery-recycling-rules-who-makes-it-who-recycles-it</a></li>
+<li id="src-14">International Energy Agency. (2026). <i>Global critical minerals outlook 2026</i>. <a href="https://www.iea.org/reports/global-critical-minerals-outlook-2026" target="_blank" rel="noopener">https://www.iea.org/reports/global-critical-minerals-outlook-2026</a></li>
+<li id="src-15">Lewis, M. (2026, July 2). ‘World’s largest’ second-life EV battery factory opens in just six weeks. <i>Electrek</i>. <a href="https://electrek.co/2026/07/02/worlds-largest-second-life-ev-battery-factory-opens-in-just-six-weeks/" target="_blank" rel="noopener">https://electrek.co/2026/07/02/worlds-largest-second-life-ev-battery-factory-opens-in-just-six-weeks/</a></li>
+<li id="src-16">Martucci, B. (2024, November 26). Element Energy commissions 53-MWh second-life battery energy storage project in Texas. <i>Utility Dive</i>. <a href="https://www.utilitydive.com/news/element-energy-commissions-53-mwh-second-life-battery-energy-storage-projec/734020/" target="_blank" rel="noopener">https://www.utilitydive.com/news/element-energy-commissions-53-mwh-second-life-battery-energy-storage-projec/734020/</a></li>
+<li id="src-17">Martucci, B. (2026, September 15). “Second-life” battery project is B2U’s second in ERCOT, with more on the way. <i>Utility Dive</i>. <a href="https://www.utilitydive.com/news/second-life-battery-project-is-b2us-second-in-ercot-with-more-on-the-wa/830409/" target="_blank" rel="noopener">https://www.utilitydive.com/news/second-life-battery-project-is-b2us-second-in-ercot-with-more-on-the-wa/830409/</a></li>
+<li id="src-18">Mousa, E., Hu, X., &amp; Ye, G. (2022). Effect of graphite on the recovery of valuable metals from spent Li-ion batteries in baths of hot metal and steel. <i>Recycling, 7</i>(1), Article 5. <a href="https://doi.org/10.3390/recycling7010005" target="_blank" rel="noopener">https://doi.org/10.3390/recycling7010005</a></li>
+<li id="src-19">Neubauer, J., &amp; Pesaran, A. (2010). <i>PHEV/EV Li-ion battery second-use project</i> (NREL/PO-540-48119). National Renewable Energy Laboratory. <a href="https://www.nrel.gov/docs/fy10osti/48119.pdf" target="_blank" rel="noopener">https://www.nrel.gov/docs/fy10osti/48119.pdf</a></li>
+<li id="src-20">NIO. (2020, August 20). <i>NIO launches Battery as a Service</i> [Press release]. <a href="https://www.nio.com/news/nio-launches-battery-service" target="_blank" rel="noopener">https://www.nio.com/news/nio-launches-battery-service</a></li>
+<li id="src-21">Quinn, M. (2024, January 10). New Jersey governor signs EPR law for electric vehicle batteries. <i>Waste Dive</i>. <a href="https://www.wastedive.com/news/electric-vehicle-battery-epr-law-new-jersey-murphy/704220/" target="_blank" rel="noopener">https://www.wastedive.com/news/electric-vehicle-battery-epr-law-new-jersey-murphy/704220/</a></li>
+<li id="src-22">Redwood Materials. (2026, March 24). <i>Redwood and Crusoe expand compute to 7x scale after 99.2% microgrid uptime</i>. <a href="https://www.redwoodmaterials.com/news/redwood-and-crusoe-expand-compute-to-7x-scale/" target="_blank" rel="noopener">https://www.redwoodmaterials.com/news/redwood-and-crusoe-expand-compute-to-7x-scale/</a></li>
+<li id="src-23">Smartville solution for used EV batteries gains traction. (2023). <i>San Diego Business Journal</i>. <a href="https://sdbj.com/technology/clean-tech/smartville-solution-for-used-ev-batteries-gains-traction/" target="_blank" rel="noopener">https://sdbj.com/technology/clean-tech/smartville-solution-for-used-ev-batteries-gains-traction/</a></li>
+<li id="src-24">Spangenberger, J. (2019, June 11). <i>ReCell Center focus areas: Direct cathode recycling and other materials separation</i> [Conference presentation, project bat434]. U.S. Department of Energy Vehicle Technologies Office Annual Merit Review. <a href="https://www.energy.gov/cmei/vehicles/articles/recell-center-focus-areas-direct-cathode-recycling-and-other-materials" target="_blank" rel="noopener">https://www.energy.gov/cmei/vehicles/articles/recell-center-focus-areas-direct-cathode-recycling-and-other-materials</a></li>
+<li id="src-25">Talar, K. (2026, February 6). Battery recycling complete guide 2026: EU regulation, black mass, recovery. <i>How to Store Electricity</i>. <a href="https://howtostoreelectricity.com/battery-recycling-complete-guide/" target="_blank" rel="noopener">https://howtostoreelectricity.com/battery-recycling-complete-guide/</a></li>
+<li id="src-26">U.S. Environmental Protection Agency. (2026, July 30). <i>Lithium-ion battery recycling frequently asked questions</i>. <a href="https://www.epa.gov/hw/lithium-ion-battery-recycling-frequently-asked-questions" target="_blank" rel="noopener">https://www.epa.gov/hw/lithium-ion-battery-recycling-frequently-asked-questions</a></li>
+<li id="src-27">Wallace, J. (2025, August 8). Glencore completes takeover of Li-Cycle battery recycling assets. <i>Waste Dive</i>. <a href="https://www.wastedive.com/news/glencore-completes-takeover-of-li-cycle-battery-recycling-assets/757199/" target="_blank" rel="noopener">https://www.wastedive.com/news/glencore-completes-takeover-of-li-cycle-battery-recycling-assets/757199/</a></li>
+<li id="src-28">Westerheide, C. (2026, June 10). GM and Redwood expand partnership with second-life battery storage project. <i>electrive</i>. <a href="https://electrive.com/2026/06/10/gm-and-redwood-expand-partnership-with-second-life-battery-storage-project" target="_blank" rel="noopener">https://electrive.com/2026/06/10/gm-and-redwood-expand-partnership-with-second-life-battery-storage-project</a></li>
+<li id="src-29">Yamanouchi, E., Hobbs, E., Youden, M., &amp; Timmins, T. J. (2026, January 20). <i>How is Canada managing the end-of-life for EV batteries?</i> Gowling WLG. <a href="https://gowlingwlg.com/en/insights-resources/articles/2026/how-is-canada-managing-the-end-of-life-for-ev-batteries" target="_blank" rel="noopener">https://gowlingwlg.com/en/insights-resources/articles/2026/how-is-canada-managing-the-end-of-life-for-ev-batteries</a></li>
+<li id="src-30">Zenobē. (2024). <i>Battery lifecycle management for transit</i> [Brochure]. <a href="https://www.zenobe.com/wp-content/uploads/2024/08/US_Battery-Lifecycle-Management_Transit.pdf" target="_blank" rel="noopener">https://www.zenobe.com/wp-content/uploads/2024/08/US_Battery-Lifecycle-Management_Transit.pdf</a></li>
+<li id="src-31">Zenobē. (2026, March 19). <i>Zenobē expands its North American fleet with acquisition of Revolv</i>. <a href="https://www.zenobe.com/news-and-events/zenobe-expands-its-north-american-fleet-with-acquisition-of-revolv/" target="_blank" rel="noopener">https://www.zenobe.com/news-and-events/zenobe-expands-its-north-american-fleet-with-acquisition-of-revolv/</a></li>
+</ol>
+</section>
+</div>
+
+<script>
+(function(){
+var REF={1:"Ample (2023)",2:"Attia, Moch & Herring (2024)",3:"Bostik (n.d.)",4:"California Energy Commission (2023)",5:"California Energy Commission (2024)",6:"Ciampoli (2026), APPA",7:"Ellen MacArthur Foundation (2026)",8:"European Commission (2025), CORDIS MARBEL",9:"Regulation (EU) 2023/1542",10:"Foehringer Merchant (2026), MIT Technology Review",11:"Goldberg, Hagen & Luo (2025), Beveridge & Diamond",12:"Harper et al. (2019), Nature",13:"Hu (2026), Mysteel",14:"IEA (2026), Global Critical Minerals Outlook 2026",15:"Lewis (2026), Electrek",16:"Martucci (2024), Utility Dive",17:"Martucci (2026), Utility Dive",18:"Mousa, Hu & Ye (2022), Recycling",19:"Neubauer & Pesaran (2010), NREL",20:"NIO (2020)",21:"Quinn (2024), Waste Dive",22:"Redwood Materials (2026)",23:"San Diego Business Journal (2023)",24:"Spangenberger (2019), DOE ReCell",25:"Talar (2026), How to Store Electricity",26:"US EPA (2026)",27:"Wallace (2025), Waste Dive",28:"Westerheide (2026), electrive",29:"Yamanouchi et al. (2026), Gowling WLG",30:"Zenobē (2024)",31:"Zenobē (2026)"};
+function c(){var a=[].slice.call(arguments);return '<sup class="cite">'+a.map(function(n){return '<a href="#src-'+n+'">'+n+'</a>';}).join(',')+'</sup>';}
+function dl(rows){return '<dl>'+rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>';}).join('')+'</dl>';}
+var STAGE=["Minerals involved","Main impacts and risks","Which loop eases it"];
+var LOOP=["What happens","Who does it","Real example","Output","Re-entry point"];
+function st(a,b,d){return dl([[STAGE[0],a],[STAGE[1],b],[STAGE[2],d]]);}
+function lp(a){return dl(a.map(function(v,i){return [LOOP[i],v];}));}
+var D={
+mining:{k:"Stage · Layer 1",col:"var(--ore)",t:"Mining",h:st(
+ "Lithium from hard-rock ore and brines; nickel from laterite and sulphide ores; cobalt mostly as a by-product of DRC copper and Indonesian nickel; natural graphite; copper"+c(14)+" (IEA pp. 139, 158).",
+ "Supply is concentrated: the DRC mines two-thirds of cobalt, and Indonesia’s share of nickel is set to pass 70% (pp. 121, 157). In Chile’s Atacama, around 70% of the water footprint per tonne of lithium product comes from brine production (p. 319). Indonesian high-pressure acid leaching needs about 9 t of sulphur per tonne of nickel (p. 150). In 2025 Indonesia revoked four nickel permits in Raja Ampat after protests, and Norway’s pension fund divested from Eramet over the Weda Bay site (p. 97)"+c(14)+".",
+ "Loops 4 and 5 send metal back to refining, replacing some mined feed. IEA expects secondary supply to roughly double its share, from about 10% to close to 20% by 2040 (p. 12)"+c(14)+". Loops 1–3 delay demand for new batteries."),src:[14]},
+refining:{k:"Stage · Layer 1",col:"var(--ref)",t:"Refining & processing",h:st(
+ "Battery-grade lithium carbonate and hydroxide, nickel and cobalt sulphates, spherical and synthetic graphite, refined copper"+c(14)+" (p. 240).",
+ "Refining is more concentrated than mining. China holds about 70% of lithium refining (75% of 2025 output), 75% of cobalt refining, over 90% of battery-grade graphite and just under 50% of copper refining capacity (pp. 121, 141). In October 2025 China announced export controls on cathode materials, precursors and graphite anode materials (p. 7)"+c(14)+".",
+ "The pyrometallurgy alloy re-enters here for refining"+c(12)+". Recycling only lowers geopolitical risk if recovery capacity sits outside the dominant supplier: China also holds almost 90% of material-recovery capacity (p. 73)"+c(14)+"."),src:[12,14]},
+cell:{k:"Stage · Layer 1",col:"var(--bat)",t:"Cell production",h:st(
+ "Cathode (lithium, nickel, cobalt) and anode (graphite) coatings on aluminium and copper foils"+c(12)+". Critical minerals make up about a quarter of cell price and almost 20% of pack price (p. 240)"+c(14)+".",
+ "Factory scrap: electrode offcuts and rejected cells. Scrap rates range from under 5% to as high as 90% during a plant’s ramp-up"+c(2)+".",
+ "Loop 5 sends this scrap straight to recycling. Battery-grade salts from hydrometallurgy and cathode powder from direct recycling come back here, to precursor and cathode making"+c(25)+"."),src:[2,12,14,25]},
+pack:{k:"Stage · Layer 1",col:"var(--ni)",t:"Pack integration",h:st(
+ "Cells grouped into modules and packs with copper busbars and cables, a battery management system, cooling and casing"+c(12)+".",
+ "“The design of current battery packs is not optimized for easy disassembly.” Cells bonded with epoxy and adhesives make repair and recycling harder"+c(12)+".",
+ "Loop 2 re-enters here. Modular design (removable modules, removable or debondable adhesives and gap fillers) makes repair, reuse and recycling easier"+c(8,3,7)+"."),src:[3,7,8,12]},
+vehicle:{k:"Stage · Layer 1",col:"var(--int)",t:"Vehicle & service",h:st(
+ "All five minerals arrive inside the pack.",
+ "If the driver owns the battery, it can end up anywhere at end of life. Service models keep ownership with a company that tracks the battery.",
+ "Loop 1: under NIO’s Battery as a Service, a battery asset company co-founded with CATL owns the packs, drivers pay monthly, and packs can be swapped or upgraded"+c(20)+"."),src:[20]},
+use:{k:"Stage · Layer 1",col:"var(--int)",t:"Use",h:st(
+ "All five minerals, locked in the pack for the vehicle’s life.",
+ "EV batteries degraded to 70–80% of original power or capacity are insufficient for automotive use"+c(19)+", but often still useful elsewhere.",
+ "Loop 1 keeps the battery in service longer. When it leaves the vehicle, it goes to collection and assessment, which routes it to loops 2–4."),src:[19]},
+collection:{k:"Decision point · Layer 1",col:"var(--muted)",t:"Collection & assessment",h:
+ "<p>Batteries leaving vehicles are collected, then pass four checks. The result decides which loop they take.</p><ol class='chk'><li><b>Safety screening.</b> Swollen, leaking or crash-damaged batteries go straight to recycling. In the US they cannot fly and need special DOT packaging"+c(26)+". Packs that cannot be shredded safely are best sent whole to a smelter (pyrometallurgy)"+c(25)+".</li><li><b>Records check.</b> Battery management data and, in the EU, the battery passport for EV batteries from 18 Feb 2027"+c(9)+". China is building a national battery digital ID"+c(13)+".</li><li><b>Health diagnostics.</b> State of health is the key metric for deciding reuse, remanufacture or recycling"+c(12)+". Modules above roughly 70% health are worth screening for second life; as a rule, reuse LFP, recycle nickel-rich packs, and decide NMC case by case"+c(25)+".</li><li><b>Economic check.</b> If the second-use price falls below refurbishment cost plus the recycling credit, recycling wins"+c(12)+".</li></ol><p><b>Sort by chemistry.</b> Mixing NMC with LFP before shredding contaminates the black mass and lowers its value"+c(25)+".</p><p><b>Four outcomes:</b> repair or remanufacture (loop 2), second life (loop 3), harvest good modules for loops 2–3, or recycle (loop 4).</p>"+dl([
+ ["Who collects · United States","No federal producer responsibility. New Jersey was the first state to pass an EPR law for EV batteries (Jan 2024)"+c(21)+". EPA says most discarded lithium-ion batteries are likely hazardous waste and recommends universal-waste handling"+c(26)+"."],
+ ["Who collects · Canada","A voluntary national EV Battery Recovery Program since June 2025, coordinated by Call2Recycle with 16 automakers"+c(29)+"."],
+ ["Who collects · China","From 1 April 2026, automakers and battery makers must run collection networks"+c(13)+"."],
+ ["Who collects · European Union","Producers carry extended producer responsibility"+c(9)+"."]]),src:[9,12,13,21,25,26,29]},
+loop1:{k:"Loop 1",col:"var(--int)",t:"Intensive Use &amp; Access: BaaS",h:lp([
+ "The battery becomes an asset separate from the vehicle. A service company owns, finances, monitors and maintains it; the fleet pays a fee. Swapping lets standard modules be shared across vehicles.",
+ "Battery-as-a-Service (BaaS) operators and the fleets that use them.",
+ "<b>Zenobē</b> owns and maintains fleet batteries, monitors their health, guarantees a minimum state of health and replaces underperforming batteries; at the end of vehicle use it assesses them for second life and sends failed modules to recycling"+c(30)+". In March 2026 it bought Revolv, taking on 13 sites and over 100 electric trucks in California, alongside US school-bus projects in Massachusetts, Long Island and Chicago"+c(31)+".<br><b>Ample</b> (San Francisco) swaps shoebox-sized battery modules in about five minutes; tests with Uber and Sally involved thousands of swaps and over a million electric miles"+c(1)+". Users pay as they go"+c(5)+", and the California Energy Commission awarded about US$14.7 million to expand its Brisbane, California module plant"+c(4)+".",
+ "More service from each battery; batteries monitored centrally and sized to real driving needs; a managed path from vehicle to second life to recycling.",
+ "Stays in the Use stage. Because the operator keeps ownership, it can route each battery to loop 3 or loop 4 at the end of its first life."]),src:[1,4,5,30,31]},
+loop2:{k:"Loop 2",col:"var(--ni)",t:"Life Extension: Modular Design",h:lp([
+ "Packs, modules and materials are designed to be opened, tested, repaired, reused and separated, instead of being bonded together permanently.",
+ "Pack designers, materials and adhesive suppliers, and battery-management developers.",
+ "<b>MARBEL</b> (EU-funded, 2021–March 2025) built a modular pack with plug-and-play modules and a battery management system for diagnostics; it reached prototypes and a dismantling patent, not commercial deployment"+c(8)+".<br><b>Bostik</b> sells removable, repositionable thermal gap fillers so components can be separated for repair or dismantling"+c(3)+"; the Ellen MacArthur Foundation also describes its heat-triggered Prep DB debonding primer"+c(7)+".<br><b>GRST</b> makes a PFAS-free, water-soluble electrode binder so electrode materials separate with water; the Foundation reports GRST’s claims of over 99.9% recovery of high-purity black mass and up to 90% lower emissions (company claims)"+c(7)+".",
+ "Packs and modules that are easier to repair, grade, reuse and dismantle. None of these cases yet measures lithium, nickel, cobalt or graphite avoided.",
+ "Pack integration. Good design also makes loops 3 and 4 cheaper and cleaner."]),src:[3,7,8]},
+loop3:{k:"Loop 3",col:"var(--ref)",t:"Second Life: Stationary Storage",h:lp([
+ "EV batteries retire at about 70–80% of original capacity"+c(19)+": too little for driving, enough for stationary storage. They are tested and reused in grid storage, data-centre microgrids and behind-the-meter systems. Second life does not return minerals; it replaces new storage batteries and delays recycling.",
+ "Second-life integrators, some of them recyclers that decide pack by pack between reuse and recovery.",
+ "<b>Redwood Energy</b>: a 12 MW / 63 MWh microgrid for Crusoe’s AI data centres, called the world’s largest second-life system, with 99.2% availability"+c(22)+"; with GM, about 100 used packs form a 1.5 MW / 7.2 MWh system at a Michigan plant, and about 10,000 GM packs are earmarked for second life"+c(28)+".<br><b>B2U</b>: the 28 MWh Bexar Martinez project near San Antonio began operating in September 2026; about 100 MWh operate across Texas and California, and it manages over 5,000 repurposed batteries"+c(6)+". It reports a pipeline above 1,000 MWh, a Waymo supply deal and costs up to 40% below new systems (company claim)"+c(17)+".<br><b>Element Energy</b>: 53 MWh from 900 used EV batteries in West Texas (2024), with about 2 GWh procured; claims a 30–50% cost discount"+c(16)+".<br><b>Moment Energy</b>: opened a Vancouver plant in June 2026 aiming for 1 GWh a year by 2030"+c(15)+"; 11 systems deployed with packs from about 20 automakers, priced under US$90/kWh against new storage batteries at about US$70/kWh"+c(10)+".<br><b>Smartville</b> (Carlsbad, California): a 500 kWh Nissan LEAF system for Nissan North America and a US$5.9 million DOE grant"+c(23)+".",
+ "Stationary storage capacity, a demand sector in the project scope.",
+ "Leaves the EV chain. Packs that fail grading, or finish their second life, go to recycling (dashed line)."]),src:[6,10,15,16,17,19,22,23,28]},
+sl2rec:{k:"Connector",col:"var(--bat)",t:"Second-life batteries reach recycling",h:"<p>Second life delays recycling but does not replace it: “recycling must be the ultimate fate of all LIBs, even if they first have a second use”"+c(12)+". The battery goes through assessment again and enters Layer 2 at discharge.</p>",src:[12]},
+loop4:{k:"Loop 4",col:"var(--bat)",t:"End-of-life recycling",h:lp([
+ "Batteries unfit for reuse are discharged, dismantled and shredded into black mass, then refined by pyro-, hydro- or direct recycling"+c(12)+".",
+ "Battery recyclers, often in a spoke-and-hub model: spokes make black mass cheaply, hubs refine it at high capital cost. “Recycling is not a shredding business, it is a refining business”"+c(25)+".",
+ "<b>Redwood Materials</b> (Nevada) recovers over 20 GWh of batteries a year and refines through to cathode material and anode copper foil. <b>Ascend Elements</b> (Covington, Georgia) can process up to 30,000 t a year. <b>Cirba Solutions</b> runs collection, logistics and processing"+c(25)+". Li-Cycle’s Rochester hub never operated; the company went bankrupt in 2025 and Glencore, which bid about US$40 million, took over its assets"+c(27)+".",
+ "Battery-grade metal salts and lithium chemicals, or an alloy for further refining"+c(12)+".",
+ "Refining or cell production (see the return loop). The US holds under 1% of global material-recovery capacity today (p. 73)"+c(14)+"."]),src:[12,14,25,27]},
+loop5:{k:"Loop 5",col:"var(--mkt)",t:"Manufacturing scrap recycling",h:lp([
+ "Electrode offcuts and rejected cells from cell plants go straight to recycling"+c(11)+". They are cleaner and more uniform than end-of-life packs"+c(25)+".",
+ "Recyclers, often tied to cell makers: CATL’s recycling arm Brunp gets preferential access to scrap (p. 73)"+c(14)+". Recyclers site plants near gigafactories for this feedstock"+c(25)+".",
+ "Roughly half of recyclers’ feedstock was production scrap in 2023"+c(25)+"; the wave of end-of-life EVs is expected in the 2030s (pp. 73–74)"+c(14)+".",
+ "Black mass and, after metallurgical processing, battery-grade chemicals. Clean scrap meeting China’s import specifications has traded above 100% payable"+c(25)+".",
+ "Enters at the black mass stage, through shredding &amp; separation"+c(25)+". Because its chemistry is known and clean, scrap is where direct recycling already works"+c(25)+"."]),src:[11,14,25]},
+layer2:{k:"Layer 2 · Overview",col:"var(--bat)",t:"Recycling, opened up",h:
+ "<p>Recycling has two stages. <b>Pre-treatment</b> (discharge, dismantling, shredding and separation) turns batteries and factory scrap into black mass. <b>Material recovery</b> (pyrometallurgy, hydrometallurgy or direct recycling) turns black mass into battery materials"+c(12)+". Damaged or whole cells and modules can skip shredding and go straight to a smelter"+c(25)+".</p>"+dl([
+ ["Three routes compared","Pyrometallurgy tolerates mixed and damaged feed but sends lithium to slag and loses graphite; hydrometallurgy also recovers lithium; direct recycling keeps cathode material intact but needs clean, single-chemistry feed"+c(12,18,25)+"."],
+ ["Global capacity","Almost 4 Mt of spent batteries a year in pre-treatment and over 2 Mt of black mass in material recovery, well above the feedstock available today (p. 73)"+c(14)+"."],
+ ["Where it sits","China holds over three-quarters of pre-treatment and almost 90% of material recovery; the United States under 5% and under 1% (p. 73). US material-recovery capacity is planned to grow 13-fold by 2030 (p. 74)"+c(14)+"."],
+ ["Feedstock","Mainly manufacturing scrap today; the wave of end-of-life EVs is expected in the 2030s (pp. 73–74)"+c(14)+". The industry scaled ahead of feedstock: Li-Cycle went bankrupt, Northvolt’s Revolt recycling closed, and Umicore delayed major European investment to at least 2032"+c(25)+"."],
+ ["Graphite","Long burned off or landfilled; Fortum now works with Vianode to recover graphite from end-of-life batteries"+c(25)+"."],
+ ["Performance targets","The EU requires recovery of 50% of lithium and 90% of cobalt, nickel and copper by end-2027, rising to 80% and 95% by end-2031"+c(9)+"."]]),src:[9,12,14,18,25]},
+discharge:{k:"Layer 2 · Step 1",col:"var(--bat)",t:"Discharge",h:"<p><b>Why first:</b> shorting a charged battery “results in rapid discharge, which may lead to heating and thermal runaway”"+c(12)+". A 60 kWh pack at 50% state of charge and 75% state of health still holds about 22.5 kWh"+c(12)+". A shredder must receive cells that are safely discharged; a smelter does not need this"+c(25)+".</p><p><b>How:</b> brine (salt-water) or ohmic (resistive) discharge. Brine is unsuitable for high-voltage packs because of electrolysis and gas. Over-discharge can dissolve copper and raise short-circuit risk"+c(12)+".</p>",src:[12,25]},
+dismantling:{k:"Layer 2 · Step 2",col:"var(--bat)",t:"Dismantling",h:"<p><b>Pack, module or cell?</b> “Battery packs must be disassembled to module level at least” for most remanufacture and recycling routes"+c(12)+".</p><p>Adhesives, epoxy bonding and fixtures make disassembly by hand or machine difficult"+c(12)+". Good modules found here can go back to loops 2–3. Whole cells or modules can also go straight to pyrometallurgy (short arrow)"+c(25)+".</p>",src:[12,25]},
+shredding:{k:"Layer 2 · Step 3",col:"var(--bat)",t:"Shredding & separation",h:"<p>Shredding happens under inert gas such as nitrogen or CO<sub>2</sub>"+c(12)+". In hydrometallurgical lines the shredded material is then calcined at low temperature to remove binders and electrolyte"+c(25)+". Screening splits two fractions:</p>"+dl([["Fine fraction","Electrode coatings: “black mass”"+c(12)+"."],["Coarse fraction","Plastics, casings and metal foils, including copper and aluminium"+c(12)+"."]])+"<p>Copper mostly leaves here; lithium, nickel, cobalt and graphite stay in the black mass. Clean foil separation here raises the value of the black mass"+c(25)+".</p>",src:[12,25]},
+blackmass:{k:"Layer 2 · Intermediate",col:"var(--mkt)",t:"Black mass",h:"<p><b>Contents:</b> electrode coatings, “metal oxides and carbon”"+c(12)+": lithium, nickel, cobalt (and manganese) plus graphite.</p><p><b>A traded commodity:</b> priced as a “payable” percentage of the contained metal value. NCM black mass into South Korea reached 87.5% payable for cobalt and nickel in January 2026; fluorine, copper and moisture lower the price"+c(25)+".</p><p><b>Trade rules:</b> the EU now classes black mass as hazardous waste and bans exports to non-OECD countries; China lifted its import ban for compliant black mass on 1 Aug 2025"+c(11)+". Most EU black mass has gone to Korea (p. 74)"+c(14)+".</p>",src:[11,12,14,25]},
+pyro:{k:"Layer 2 · Process",col:"var(--int)",t:"Pyrometallurgy",h:"<p>Whole cells or modules, or black mass, are smelted at high temperature. This produces “an alloy of Co, Cu, Fe and Ni”; the slag “typically contains the metals aluminium, manganese and lithium”. Electrolytes and plastics are burned"+c(12)+". Graphite is partly used as a reducing agent; the rest is burnt to CO<sub>2</sub> or trapped in slag"+c(18)+". The alloy still needs hydrometallurgical refining"+c(12)+".</p>"+dl([["Strength","Tolerates mixed, damaged or fire-risk batteries that cannot be shredded safely"+c(25)+"."],["Weakness","Recovers well under 50% of lithium, against the EU’s 80% target for 2031; uses up to 10 GJ per tonne of feed and emits about 2.16 kg CO<sub>2</sub> per kg of cathode"+c(25,9)+"."],["Role today","A pretreatment or a route for hazardous feedstock rather than a stand-alone route"+c(25)+"."]]),src:[9,12,18,25]},
+hydro:{k:"Layer 2 · Process",col:"var(--int)",t:"Hydrometallurgy",h:"<p>Acid leaching, most often with H<sub>2</sub>SO<sub>4</sub> and H<sub>2</sub>O<sub>2</sub>, dissolves the metals. Cobalt is recovered as sulphate, oxalate, hydroxide or carbonate; lithium as Li<sub>2</sub>CO<sub>3</sub> or Li<sub>3</sub>PO<sub>4</sub>"+c(12)+". Solvent extraction and precipitation yield nickel, cobalt and manganese sulphates and lithium carbonate or hydroxide that feed precursor making directly"+c(25)+".</p>"+dl([["Performance","Recovers 95% or more of nickel, cobalt, manganese and lithium; about 2.3 kg CO<sub>2</sub> per kg of cathode, varying with the grid; refining costs about US$1,500–1,800 per tonne of black mass"+c(25)+"."],["Example","Ascend Elements’ Hydro-to-Cathode process goes straight to precursor and cathode active material, with up to 98% recovery of critical metals (company claim)"+c(25)+"."],["Graphite","Lowers leaching efficiency"+c(18)+" and is rarely recovered because of its low value"+c(12)+"."]]),src:[12,18,25]},
+direct:{k:"Layer 2 · Process",col:"var(--int)",t:"Direct recycling",h:"<p>Cathode or anode material is removed from the electrode, reconditioned and reused in new cells. Lost lithium is topped up (relithiation)"+c(12)+". DOE’s ReCell Center researches it and has also separated graphite from copper foil hydrothermally"+c(24)+".</p>"+dl([["Strength","Keeps the energy embodied in making the cathode; a 2026 life-cycle study put a hydrothermal relithiation route at about 0.6 kg CO<sub>2</sub> per kg of cathode"+c(25)+"."],["Catch","Needs clean, sorted, single-chemistry feed. It works today for manufacturing scrap and is largely pre-commercial for mixed end-of-life material"+c(25)+"."]]),src:[12,24,25]},
+recovered:{k:"Layer 2 · Output",col:"var(--ni)",t:"Metals or compounds?",h:"<p>Mostly <b>compounds</b>: hydrometallurgy yields metal salts (sulphates) and lithium carbonate or phosphate. Pyrometallurgy yields a metal <b>alloy</b> that must be refined further. Direct recycling yields reconditioned <b>cathode powder</b>"+c(12)+".</p>",src:[12]},
+"return":{k:"Return loop",col:"var(--bat)",t:"Back into the chain",h:"<p>The return line splits in two"+c(12,25)+":</p>"+dl([["To refining","The pyrometallurgy alloy, which still needs refining into battery chemicals."],["To cell production","Battery-grade salts from hydrometallurgy feed precursor and cathode making directly; direct recycling returns cathode powder."]])+"<p>This is the line that lets recycled minerals replace mined ones.</p>",src:[12,25]}
+};
+var panel=document.getElementById("panel"),svg=document.querySelector(".dia");
+var DEF='<p class="p-kind"><i></i>Overview</p><h4>Bending a linear chain into loops</h4>'+
+ '<p>This diagram follows an NMC electric-vehicle battery, and the lithium, nickel, cobalt, graphite and copper inside it, from mining to use, and shows five ways to bring the battery or its minerals back into the chain.</p>'+
+ dl([["Layer 1 · Linear chain","Mining → refining → cell production → pack integration → vehicle → use. After use, collection and assessment decide where each battery goes next."],
+ ["Loops 1–3 · Keep the battery working","Intensive use (BaaS) and life extension keep it in vehicles longer; second life moves it into stationary storage, microgrids and backup power."],
+ ["Loops 4–5 · Recover the minerals","Retired batteries and factory scrap go to recycling. Today most recycling feedstock is manufacturing scrap, and China holds almost 90% of material-recovery capacity, the US under 1%"+c(14)+"."],
+ ["Layer 2 · Recycling","Discharge, dismantling and shredding turn batteries into black mass; pyrometallurgy, hydrometallurgy or direct recycling recover the minerals, which return to refining or cell production"+c(12)+"."]])+
+ '<p><b>Takeaway:</b> the smaller the loop, the more value is kept; every battery still ends in recycling, which is what lets recovered minerals replace mined ones.</p>'+
+ '<p class="p-hint">Click any box, numbered loop or arrow for details. Use the Highlight buttons to isolate one loop.</p>';
+function show(id){
+  var d=D[id]; if(!d)return;
+  panel.style.setProperty("--accent",d.col);
+  panel.innerHTML='<p class="p-kind"><i></i>'+d.k+'</p><h4>'+d.t+'</h4>'+d.h+(d.src.length?'<ul class="p-src">'+d.src.map(function(n){return '<li><b>['+n+']</b><a href="#src-'+n+'">'+REF[n]+'</a></li>';}).join("")+'</ul>':'');
+  svg.querySelectorAll("[data-id]").forEach(function(e){e.classList.toggle("on",e.getAttribute("data-id")===id);});
+}
+svg.querySelectorAll("[data-id]").forEach(function(el){
+  el.addEventListener("click",function(e){e.stopPropagation();show(el.getAttribute("data-id"));});
+  el.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();show(el.getAttribute("data-id"));}});
+});
+panel.addEventListener("click",function(e){var a=e.target.closest("[data-go]");if(a){e.preventDefault();show(a.getAttribute("data-go"));}});
+var btns=document.querySelectorAll("[data-hl]");
+btns.forEach(function(b){b.addEventListener("click",function(){
+  var g=b.getAttribute("data-hl");
+  btns.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+  svg.classList.toggle("dim",g!=="all");
+  svg.querySelectorAll("[data-g]").forEach(function(e){e.classList.toggle("lit",g!=="all"&&e.getAttribute("data-g").split(" ").indexOf(g)>-1);});
+});});
+panel.innerHTML=DEF;
+})();
+</script>
+
+</body>
+</html>
